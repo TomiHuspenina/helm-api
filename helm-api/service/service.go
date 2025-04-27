@@ -1,7 +1,7 @@
 package service
 
 import (
-	"Obmondo/model"
+	"helm-api/model"
 	"os"
 	"strings"
 

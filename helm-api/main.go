@@ -1,9 +1,9 @@
 package main
 
 import (
-	"Obmondo/model"
-	"Obmondo/service"
 	"fmt"
+	"helm-api/model"
+	"helm-api/service"
 )
 
 func main() {
