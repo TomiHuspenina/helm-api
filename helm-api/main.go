@@ -8,7 +8,7 @@ import (
 
 func main() {
 	req := model.HelmRequest{
-		ChartURL: "https://charts.bitnami.com/bitnami/nginx-15.0.0.tgz", // ejemplo real
+		ChartURL: "https://charts.bitnami.com/bitnami/nginx-15.0.0.tgz",
 	}
 
 	images, err := service.GetImagesFromChartURL(req)
