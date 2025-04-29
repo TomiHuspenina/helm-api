@@ -5,9 +5,9 @@ type HelmRequest struct {
 }
 
 type ImageInfo struct {
-	Image     string `json:"image"`
-	Size      string `json:"size"`
-	NumLayers int    `json:"num_layers"`
+	Image     string  `json:"image"`
+	Size      float64 `json:"size"`
+	NumLayers int     `json:"num_layers"`
 }
 
 type HelmResponse struct {

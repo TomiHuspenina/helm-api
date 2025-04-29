@@ -18,7 +18,7 @@ func main() {
 	router.POST("/images", getImagesHandler)
 	router.Run(":8080")
 
-	fmt.Println("Servidor corriendo en :8080...")
+	fmt.Println("Server running in 8080")
 
 }
 
