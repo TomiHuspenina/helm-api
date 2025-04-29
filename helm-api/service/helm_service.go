@@ -14,7 +14,7 @@ import (
 	"helm.sh/helm/v3/pkg/getter"
 )
 
-func GetImagesFromChartURL(url model.HelmRequest) ([]model.ImageInfo, apierrors.ApiError) {
+func GetImagesFromChartURL(url string) ([]model.ImageInfo, apierrors.ApiError) {
 
 	var settings = cli.New()
 	chartDwldr := downloader.ChartDownloader{
@@ -23,8 +23,8 @@ func GetImagesFromChartURL(url model.HelmRequest) ([]model.ImageInfo, apierrors.
 		Options: []getter.Option{},
 	}
 
-	tempDir := os.TempDir()                                          //temporary file
-	file, _, err := chartDwldr.DownloadTo(url.ChartURL, tempDir, "") //download chart
+	tempDir := os.TempDir()                                               //temporary file
+	file, _, err := chartDwldr.DownloadTo(url /*.chartURL*/, tempDir, "") //download chart
 	if err != nil {
 		return nil, apierrors.NewInternalServerApiError("error downloading chart", err)
 	}
@@ -45,7 +45,9 @@ func GetImagesFromChartURL(url model.HelmRequest) ([]model.ImageInfo, apierrors.
 	install.ReleaseName = "dummy"
 	install.Namespace = "default"
 
-	release, err := install.Run(chartReq, nil)
+	values := chartReq.Values
+
+	release, err := install.Run(chartReq, values)
 	if err != nil {
 		return nil, apierrors.NewInternalServerApiError("error running install dry-run", err)
 	}
