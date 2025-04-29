@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/google/go-containerregistry/pkg/crane"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
@@ -57,13 +58,49 @@ func GetImagesFromChartURL(url model.HelmRequest) ([]model.ImageInfo, apierrors.
 		if strings.HasPrefix(line, "image:") {
 			image := strings.TrimSpace(strings.TrimPrefix(line, "image:"))
 
+			sizeB, layers, err := getImagesDetail(image)
+			if err != nil {
+				images = append(images, model.ImageInfo{
+					Image:     image,
+					Size:      0,
+					NumLayers: 0,
+				})
+				continue
+			}
+
+			sizeMB := float64(sizeB) / 1024 / 1024
+
 			images = append(images, model.ImageInfo{
 				Image:     image,
-				Size:      "",
-				NumLayers: 0,
+				Size:      sizeMB,
+				NumLayers: layers,
 			})
 		}
 	}
 
 	return images, nil
+}
+
+func getImagesDetail(imageRef string) (int64, int, error) {
+
+	img, err := crane.Pull(imageRef)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	layers, err := img.Layers()
+	if err != nil {
+		return 0, 0, nil
+	}
+
+	var totalSize int64 = 0
+	for _, layer := range layers {
+		size, err := layer.Size()
+		if err != nil {
+			return 0, 0, err
+		}
+		totalSize += size
+	}
+
+	return totalSize, len(layers), nil
 }
